@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Abrechnung | JDAV NRW</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link rel="stylesheet" type="text/css" href="lib/fonts.css">
+	<link rel="stylesheet" type="text/css" href="lib/style.css">
+	<script src="lib/cost.js"></script>
+	<style type="text/css">
+		.absender {
+			display: grid;
+			grid-template-columns: max-content 1fr max-content 1fr;
+			grid-column-gap: 0.5em;
+			grid-row-gap: 0.5em;
+			margin-top: 0.75em;
+		}
+
+		.veranstaltung {
+			display: grid;
+			grid-template-columns: max-content 1fr max-content 15ch;
+			grid-column-gap: 0.5em;
+			grid-row-gap: 0.5em;
+			margin-top: 0.75em;
+			padding: 0.75em 0;
+			border-top: var(--border-thick);
+			border-bottom: var(--border-thick);
+		}
+
+		.reise {
+			display: grid;
+			grid-template-columns: max-content 13ch max-content 1fr max-content 1fr;
+			grid-template-rows: 1fr;
+			grid-column-gap: 0.5em;
+			grid-row-gap: 0.5em;
+			margin-bottom: 0.5em;
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<cost-header heading="Abrechnung" img="logo.svg">
+			JDAV Nordrhein-Westfalen<br>
+			Elisabethstr. 14<br>
+			40217 Düsseldorf
+		</cost-header>
+
+		<div class="absender">
+			<span>Name:</span>
+			<input id="name">
+			<span>E-Mail:</span>
+			<input id="email">
+			<span>Straße:</span>
+			<input id="strasse">
+			<span>Telefon:</span>
+			<input id="telefon">
+			<span>PLZ, Ort:</span>
+			<input id="plzort">
+			<span>IBAN:</span>
+			<input id="iban">
+		</div>
+
+		<div class="veranstaltung">
+			<span>Kurs / Veranstaltung:</span>
+			<input placeholder="(Titel, Ort)">
+			<span>Kurs-Nr.:</span>
+			<input class="optional">
+		</div>
+
+		<script>
+			class Auslage extends CostKind {
+				template = `
+					<style>
+						#preis {
+							width: 10ch;
+							text-align: right;
+						}
+						#anmerkung {
+							width: 50ch;
+							margin-left: 1.5em;
+						}
+					</style>
+					<input id="preis" placeholder="0,00"> €
+					<input id="anmerkung" maxlength="50" class="optional" placeholder="Belegnummer(n), Anmerkung, ...">
+				`
+				total({ $ }) {
+					return parseAmount($("#preis").value)
+				}
+			}
+
+			class Bahn extends CostKind {
+				template = `
+					<style>
+						#preis {
+							width: 10ch;
+							text-align: right;
+						}
+						#bahncard {
+							margin-left: 1.5em;
+						}
+					</style>
+					<input id="preis" placeholder="0,00"> €
+					<input id="bahncard" type="checkbox">
+					<label for="bahncard">BahnCard genutzt</label>
+				`
+				total({ $ }) {
+					const preis = parseAmount($("#preis").value)
+					const bahncardFaktor = $("#bahncard").checked ? 1.1 : 1.0
+					return Math.round(preis * bahncardFaktor)
+				}
+			}
+
+			class KmPauschale extends CostKind {
+				template = `
+					<style>
+						#km {
+							width: 7ch;
+							text-align: right;
+						}
+					</style>
+					<input id="km" placeholder="0"> km
+				`
+				total({ props, $ }) {
+					const km = parseNumber($("#km").value)
+					const max = props.maxCents || Infinity
+					return Math.min(km * props.centsProKm, max)
+				}
+			}
+
+			class Pkw extends CostKind {
+				template = `
+					<style>
+						#mitfahrer, #relevanz {
+							display: none;
+						}
+						#km {
+							width: 7ch;
+							text-align: right;
+						}
+						#satz {
+							margin-left: 1em;
+						}
+						textarea {
+							margin-top: 0.5em;
+							width: 95%;
+							height: 1em;
+							min-height: 1em;
+							resize: vertical;
+						}
+					</style>
+					<input id="km" placeholder="0"> km
+					<select id="satz">
+						<option value="7" selected>Keine Mitfahrer</option>
+						<option value="14" data-mitfahrer>+1 Mitfahrer*in</option>
+						<option value="21" data-mitfahrer>+2 Mitfahrer*innen</option>
+						<option value="28" data-mitfahrer>+3 Mitfahrer*innen</option>
+						<option value="35" data-mitfahrer>+4 Mitfahrer*innen</option>
+						<option value="42" data-mitfahrer>+5 Mitfahrer*innen</option>
+						<option value="49" data-mitfahrer>+6 Mitfahrer*innen</option>
+						<option value="56" data-mitfahrer>+7 Mitfahrer*innen</option>
+						<option value="63" data-mitfahrer>+8 Mitfahrer*innen</option>
+						<option value="30" data-relevanz>Veranstaltungsrelevant</option>
+					</select>
+					<textarea id="mitfahrer" placeholder="Name(n) Mitfahrer*innen"></textarea>
+					<textarea id="relevanz" placeholder="Erläuterung Veranstaltungsrelevanz"></textarea>
+				`
+				onChange({ $ }) {
+					const option = $("#satz").options[$("#satz").selectedIndex]
+					$("#mitfahrer").style.display = option.hasAttribute("data-mitfahrer") ? "block" : "none"
+					$("#relevanz").style.display = option.hasAttribute("data-relevanz") ? "block" : "none"
+				}
+				total({ $ }) {
+					const satz = parseNumber($("#satz").value)
+					const km = parseNumber($("#km").value)
+					return km * satz
+				}
+			}
+
+			class TagesSatz extends CostKind {
+				template = `
+					<style>
+						#tage {
+							width: 7ch;
+							text-align: right;
+						}
+					</style>
+					<input id="tage" placeholder="0"> Tage
+				`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+					return tage * props.centsProTag
+				}
+			}
+		</script>
+
+		<cost-section heading="Fahrtkosten" id="fahrtkosten">
+			<div class="reise">
+				<span>Hinreise am</span>
+				<input placeholder="(Datum)">
+				<span>von</span>
+				<input placeholder="(Ort)">
+				<span>nach</span>
+				<input placeholder="(Ort)">
+
+				<span>Rückreise am</span>
+				<input placeholder="(Datum)">
+				<span>von</span>
+				<input placeholder="(Ort)">
+				<span>nach</span>
+				<input placeholder="(Ort)">
+			</div>
+
+			<script>
+				document.querySelector("#fahrtkosten").registerOptions([
+					new Bahn("Bahn"),
+					new Auslage("ÖPNV"),
+					new KmPauschale("Abo-Ticket", { centsProKm: 30, maxCents: 5800 }),
+					new KmPauschale("Fahrrad", { centsProKm: 50 }),
+					new Pkw("PKW"),
+				])
+			</script>
+		</cost-section>
+
+		<cost-section heading="Honorar" id="honorar">
+			<script>
+				document.querySelector("#honorar").registerOptions([])
+
+				const urlParams = new URLSearchParams(window.location.search)
+				if (!urlParams.has("teamer")) {
+					document.querySelector("#honorar").style.display = "none"
+				}
+			</script>
+		</cost-section>
+
+		<cost-section heading="Auslagen" id="auslagen">
+			<script>
+				document.querySelector("#auslagen").registerOptions([
+					new Auslage("Einkäufe"),
+					new Auslage("Sonstiges"),
+				])
+			</script>
+		</cost-section>
+
+		<cost-footer connect-ids="honorar fahrtkosten auslagen">
+			<p>
+				Bitte alle Belege <strong>digital</strong> dem PDF anhängen oder als Anhang mitschicken (<a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).
+			</p>
+			<p>
+				Ich versichere die Richtigkeit meiner Angaben.
+			</p>
+		</cost-footer>
+	</main>
+</body>
+</html>

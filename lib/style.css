@@ -1,0 +1,93 @@
+html {
+	--font-monospace: "Inconsolata", "Courier New", "Courier", monospace;
+	--font-regular: "Titillium", sans-serif;
+	--border-thick: 3px solid black;
+	--toolbar-height: 2.5em;
+	margin: 0;
+	padding: 0;
+	font-family: var(--font-regular);
+	font-size: 15px;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #e0e5f0;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	box-sizing: border-box;
+	padding: 1em 2em;
+	flex: 1;
+	margin: calc(var(--toolbar-height) + 1.5em) auto 1.5em auto;
+	width: 850px;
+	background-color: #fff;
+	border: 1px solid #000;
+	box-shadow: 0 0 2em rgba(0 0 0 / 0.2);
+}
+
+input {
+	font-family: var(--font-monospace);
+	font-size: inherit;
+	padding: 0.25em;
+	border: 1px solid #999;
+}
+
+button, select, label {
+	cursor: pointer;
+}
+
+select, button {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+textarea {
+	font-family: var(--font-monospace);
+	font-size: inherit;
+	padding: 0.25em;
+	border: 1px solid #999;
+}
+
+p {
+	margin: 0.5em 0;
+}
+
+@media print {
+	@page { 
+		margin: 10mm 15mm;
+	}
+
+	html {
+		font-size: 10pt;
+		--border-thick: 2pt solid black;
+	}
+
+	body {
+		background-color: none;
+	}
+
+	main {
+		padding: 0;
+		border: none;
+		box-shadow: none;
+		width: 100%;
+		margin-top: 0;
+	}
+
+	input[type=text], input:not([type]), select, textarea {
+		border: none;
+		background-color: none;
+	}
+
+	.optional::placeholder {
+		color: transparent;
+	}
+
+	select {
+		appearance: none;
+	}
+}
