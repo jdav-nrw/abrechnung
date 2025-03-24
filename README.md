@@ -1,6 +1,6 @@
 # JDAV NRW Abrechnungsformular
 
-Tool zum Erstellen von Abrechnungen für die Teilnahme von Veranstaltungen der JDAV NRW.
+Web-Formular zum Erstellen von Abrechnungen für die Teilnahme an Veranstaltungen der JDAV NRW.
 
 ## Funktionsweise
 
