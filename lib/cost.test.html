@@ -40,9 +40,9 @@
 
 						[61728, "617,28 €"],
 						[-61728, "-617,28 €"],
-					].forEach((t => {
-						assert.strictEqual(formatAmount(t[0]), t[1], `${t[0]} -> ${t[1]}`)
-					}))
+					].forEach(([input, expect]) => {
+						assert.strictEqual(formatAmount(input), expect, `${input} -> ${expect}`)
+					})
 				})
 			})
 
@@ -81,8 +81,8 @@
 						["-12,34 €", -1234],
 						["12,34 €", 1234],
 						["-12,34 €", -1234],
-					].forEach((t => {
-						assert.strictEqual(parseAmount(t[0]), t[1], `${t[0]} -> ${t[1]}`)
+					].forEach((([input, expect]) => {
+						assert.strictEqual(parseAmount(input), expect, `${input} -> ${expect}`)
 					}))
 				})
 
@@ -104,10 +104,99 @@
 						["-,00"],
 						["1-"],
 						["1+"],
-					].forEach((t => {
+					].forEach((([input]) => {
 						assert.throws(() => {
-							parseAmount(t[0])
+							parseAmount(input)
 						}, "Malformed amount")
+					}))
+				})
+			})
+
+			describe('parseNumber', () => {
+				it('Accepts positive integers', () => {
+					[
+						["", 0],
+						["0", 0],
+						["1", 1],
+						["4618273", 4618273],
+					].forEach((([input, expect]) => {
+						assert.strictEqual(parseNumber(input), expect, `${input} -> ${expect}`)
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3 }), expect, `${input} -> ${expect}`)
+						assert.strictEqual(parseNumber(input, { mustBePositive: false }), expect, `${input} -> ${expect}`)
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3, mustBePositive: false }), expect, `${input} -> ${expect}`)
+					}))
+				})
+
+				it('Accepts negative integers', () => {
+					[
+						["-1", -1],
+						["-4618273", -4618273],
+					].forEach((([input, expect]) => {
+						assert.strictEqual(parseNumber(input, { mustBePositive: false }), expect, `${input} -> ${expect}`)
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3, mustBePositive: false }), expect, `${input} -> ${expect}`)
+					}))
+				})
+
+				it('Accepts positive floats', () => {
+					[
+						["", 0],
+						["0.0", 0],
+						["0.5", 0.5],
+						["0,5", 0.5],
+						["1.0", 1.0],
+						["1,0", 1.0],
+						["1.2", 1.2],
+						["1,2", 1.2],
+						["4618.273", 4618.273],
+						["4618,273", 4618.273],
+					].forEach((([input, expect]) => {
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3 }), expect, `${input} -> ${expect}`)
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3, mustBePositive: false }), expect, `${input} -> ${expect}`)
+					}))
+				})
+
+				it('Accepts negative floats', () => {
+					[
+						["-0.0", 0],
+						["-0.5", -0.5],
+						["-0,5", -0.5],
+						["-1.0", -1.0],
+						["-1,0", -1.0],
+						["-1.2", -1.2],
+						["-1,2", -1.2],
+						["-4618.273", -4618.273],
+						["-4618,273", -4618.273],
+					].forEach((([input, expect]) => {
+						assert.strictEqual(parseNumber(input, { maxDecimalPlaces: 3, mustBePositive: false }), expect, `${input} -> ${expect}`)
+					}))
+				})
+
+				it('Rejects malformed input', () => {
+					[
+						["asdf", {}],
+						["1a", {}],
+						["a1", {}],
+						["1,000", {}],
+
+						["1,a", { maxDecimalPlaces: 2 }],
+						["a,0", { maxDecimalPlaces: 2 }],
+						["a.123", { maxDecimalPlaces: 2 }],
+
+						["1,000", { maxDecimalPlaces: 2 }],
+						["1,000", { mustBePositive: 2 }],
+						["-1", { mustBePositive: true }],
+						["-0", { mustBePositive: true }],
+						["-1.0", { mustBePositive: true, maxDecimalPlaces: 2 }],
+
+						["-a.0", { mustBePositive: false, maxDecimalPlaces: 5 }],
+						["-1.a", { mustBePositive: false, maxDecimalPlaces: 5 }],
+						["-a,0", { mustBePositive: false, maxDecimalPlaces: 5 }],
+						["-1,a", { mustBePositive: false, maxDecimalPlaces: 5 }],
+						["-1.0,2", { mustBePositive: false, maxDecimalPlaces: 5 }],
+					].forEach((([input, options]) => {
+						assert.throws(() => {
+							parseNumber(input, options)
+						}, "Malformed number")
 					}))
 				})
 			})
