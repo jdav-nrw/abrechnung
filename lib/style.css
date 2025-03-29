@@ -2,7 +2,7 @@ html {
 	--font-monospace: "Inconsolata", "Courier New", "Courier", monospace;
 	--font-regular: "Titillium", sans-serif;
 	--border-thick: 3px solid black;
-	--toolbar-height: 2.5em;
+	--toolbar-height: 3em;
 	margin: 0;
 	padding: 0;
 	font-family: var(--font-regular);
@@ -12,7 +12,7 @@ html {
 body {
 	margin: 0;
 	padding: 0;
-	background-color: #e0e5f0;
+	background-color: #efffe7;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
@@ -22,7 +22,7 @@ main {
 	box-sizing: border-box;
 	padding: 1em 2em;
 	flex: 1;
-	margin: calc(var(--toolbar-height) + 1.5em) auto 1.5em auto;
+	margin: 1.5em auto calc(var(--toolbar-height) + 1.5em) auto;
 	width: 850px;
 	background-color: #fff;
 	border: 1px solid #000;
@@ -36,11 +36,14 @@ input {
 	border: 1px solid #999;
 }
 
-button, select, label {
+button,
+select,
+label {
 	cursor: pointer;
 }
 
-select, button {
+select,
+button {
 	font-family: inherit;
 	font-size: inherit;
 }
@@ -57,7 +60,7 @@ p {
 }
 
 @media print {
-	@page { 
+	@page {
 		margin: 10mm 15mm;
 	}
 
@@ -78,7 +81,10 @@ p {
 		margin-top: 0;
 	}
 
-	input[type=text], input:not([type]), select, textarea {
+	input[type=text],
+	input:not([type]),
+	select,
+	textarea {
 		border: none;
 		background-color: none;
 	}
