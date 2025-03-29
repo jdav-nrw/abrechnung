@@ -96,4 +96,8 @@ p {
 	select {
 		appearance: none;
 	}
+
+	.noprint {
+		display: none;
+	}
 }
