@@ -237,7 +237,9 @@
 			<script>
 				document.querySelector("#honorar").registerOptions([
 					new TagesSatz("Teamer*in LLT", { centsProTag: 20000 }),
-					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000 })
+					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000 }),
+					new TagesSatz("Zusatz Orgaaufwand", { centsProTag: 10000, hint: "Pro angefangene 4 Schulungstage" }),
+					new TagesSatz("Küchenteamer*in", { centsProTag: 10000, hint: "Gemeinsames Honorar, nur bei Grundausbildungen und Aufbaumodulen" }),
 				])
 
 				if (!urlParams.has("teamer")) {
