@@ -104,6 +104,7 @@ p {
 
 	input[type=text],
 	input[type=email],
+	input[type=tel],
 	input:not([type]),
 	select,
 	textarea {
