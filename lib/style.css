@@ -82,6 +82,7 @@ p {
 	}
 
 	input[type=text],
+	input[type=email],
 	input:not([type]),
 	select,
 	textarea {
