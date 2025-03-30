@@ -71,14 +71,21 @@ p {
 	padding: 0 1em;
 }
 
+.hint {
+	/* Use this CSS class for hints about form usage that are not supposed to be
+	   included in the print-out. */
+	font-style: oblique;
+	font-size: 0.95rem;
+	color: #888;
+}
+
 @media print {
 	@page {
 		size: A4;
 		margin: 10mm 15mm;
 	}
 
-	html {
-		font-size: 10pt;
+	html {		font-size: 10pt;
 		--border-thick: 2pt solid black;
 	}
 
@@ -119,6 +126,10 @@ p {
 	a {
 		text-decoration: underline;
 		color: #777;
+	}
+
+	.hint {
+		display: none;
 	}
 
 	.noprint {

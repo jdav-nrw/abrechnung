@@ -216,16 +216,15 @@
 				<span>nach</span>
 				<input placeholder="(Ort)">
 			</div>
-			<div class="noprint">
-				<br>
-				<em>Bitte alle Belege einzeln eintragen:</em>
+			<div class="hint">
+				Bitte alle Belege einzeln eintragen.
 			</div>
 
 			<script>
 				document.querySelector("#fahrtkosten").registerOptions([
-					new Bahn("Bahn", { description: "2. Klasse, auch Fahrradticket & Sitzplatzreservierung (nicht mit BC-Rabatt kombinierbar -> neue Zeile)" }),
+					new Bahn("Bahn", { hint: "2. Klasse, auch Fahrradticket & Sitzplatzreservierung (nicht mit BC-Rabatt kombinierbar -> neue Zeile)" }),
 					new Auslage("ÖPNV"),
-					new KmPauschale("Abo-Ticket", { centsProKm: 30, maxCents: 5800, description: "Hinweis zur Berechnung: Kürzeste Strecke mit Google Maps (Auto), Hin- und Rückweg" }),
+					new KmPauschale("Abo-Ticket", { centsProKm: 30, maxCents: 5800, hint: "Hinweis zur Berechnung: Kürzeste Strecke mit Google Maps (Auto), Hin- und Rückweg" }),
 					new KmPauschale("Fahrrad", { centsProKm: 50 }),
 					new Pkw("PKW")
 				])
@@ -247,8 +246,8 @@
 		</cost-section>
 
 		<cost-section heading="Auslagen" id="auslagen">
-			<div class="noprint">
-				<em>Bitte alle Belege einzeln eintragen:</em>
+			<div class="hint">
+				Bitte alle Belege einzeln eintragen.
 			</div>
 			<script>
 				document.querySelector("#auslagen").registerOptions([
@@ -259,8 +258,8 @@
 		</cost-section>
 
 		<cost-footer connect-ids="honorar fahrtkosten auslagen">
-			<p>
-				<em>Bitte alle Belege <strong>digital</strong> dem PDF anhängen oder als Anhang mitschicken (an <a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).</em>
+			<p class="hint">
+				Bitte alle Belege einscannen/abfotografieren und <strong><u>digital</u></strong> dem PDF anhängen oder als Anhang mitschicken (an <a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).
 			</p>
 		</cost-footer>
 	</main>
