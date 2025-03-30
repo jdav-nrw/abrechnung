@@ -71,6 +71,12 @@ p {
 	padding: 0 1em;
 }
 
+.button-primary {
+	background-color: #4ba61a;
+	color: #fff;
+	border: 1px solid #000;
+}
+
 .hint {
 	/* Use this CSS class for hints about form usage that are not supposed to be
 	   included in the print-out. */
@@ -85,7 +91,8 @@ p {
 		margin: 10mm 15mm;
 	}
 
-	html {		font-size: 10pt;
+	html {
+		font-size: 10pt;
 		--border-thick: 2pt solid black;
 	}
 
