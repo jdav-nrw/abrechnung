@@ -36,6 +36,10 @@ input {
 	border: 1px solid #999;
 }
 
+input[type=checkbox] {
+	accent-color: #4ba61a;
+}
+
 button,
 select,
 label {
@@ -70,7 +74,7 @@ p {
 	}
 
 	body {
-		background-color: none;
+		background-color: transparent;
 	}
 
 	main {
@@ -87,7 +91,11 @@ p {
 	select,
 	textarea {
 		border: none;
-		background-color: none;
+		background-color: transparent;
+	}
+
+	input[type=checkbox] {
+		accent-color: #777;
 	}
 
 	.optional::placeholder {
@@ -96,6 +104,11 @@ p {
 
 	select {
 		appearance: none;
+	}
+
+	a {
+		text-decoration: underline;
+		color: #777;
 	}
 
 	.noprint {
