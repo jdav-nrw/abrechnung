@@ -71,6 +71,8 @@
 		</div>
 
 		<script>
+			const urlParams = new URLSearchParams(window.location.search)
+
 			class Auslage extends CostKind {
 				template = `
 					<style>
@@ -163,7 +165,7 @@
 						<option value="56" data-mitfahrer>+7 Mitfahrer*innen</option>
 						<option value="63" data-mitfahrer>+8 Mitfahrer*innen</option>
 						<option value="30" data-relevanz>veranstaltungsrelevant</option>
-					${(new URLSearchParams(window.location.search)).has("teamer")
+					${urlParams.has("teamer")
 						? `<option value="20">LJL/LJS/Teamer*in (alleine)</option>
 					    <option value="30" data-mitfahrer>LJL/LJS/Teamer*in (1-3 Mitfahrer*innen)</option>`
 						: ""}
@@ -238,7 +240,6 @@
 					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000 })
 				])
 
-				const urlParams = new URLSearchParams(window.location.search)
 				if (!urlParams.has("teamer")) {
 					document.querySelector("#honorar").style.display = "none"
 				}
