@@ -155,20 +155,20 @@
 					</style>
 					<input id="km" placeholder="0"> km
 					<select id="satz">
-						<option value="7" selected>alleine</option>
+					${urlParams.has("team")
+						? `<option value="20">LJL/LJS/Teamer*in (alleine)</option>
+					    <option value="30" data-mitfahrer>LJL/LJS/Teamer*in (1-3 Mitfahrer*innen)</option>`
+						: `<option value="7" selected>alleine</option>
 						<option value="14" data-mitfahrer>+1 Mitfahrer*in</option>
 						<option value="21" data-mitfahrer>+2 Mitfahrer*innen</option>
-						<option value="28" data-mitfahrer>+3 Mitfahrer*innen</option>
+						<option value="28" data-mitfahrer>+3 Mitfahrer*innen</option>`
+					}
 						<option value="35" data-mitfahrer>+4 Mitfahrer*innen</option>
 						<option value="42" data-mitfahrer>+5 Mitfahrer*innen</option>
 						<option value="49" data-mitfahrer>+6 Mitfahrer*innen</option>
 						<option value="56" data-mitfahrer>+7 Mitfahrer*innen</option>
 						<option value="63" data-mitfahrer>+8 Mitfahrer*innen</option>
 						<option value="30" data-relevanz>veranstaltungsrelevant</option>
-					${urlParams.has("teamer")
-						? `<option value="20">LJL/LJS/Teamer*in (alleine)</option>
-					    <option value="30" data-mitfahrer>LJL/LJS/Teamer*in (1-3 Mitfahrer*innen)</option>`
-						: ""}
 					</select>
 					<label id="label-satz" class="hint" for="satz"></label>
 					<textarea id="mitfahrer" placeholder="Name(n) Mitfahrer*innen"></textarea>
@@ -200,6 +200,53 @@
 				total({ props, $ }) {
 					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
 					return tage * props.centsProTag
+				}
+			}
+
+			class TagesSatzAnteil extends CostKind {
+				template = `
+					<style>
+						#tage {
+							width: 10ch;
+							text-align: right;
+						}
+						#anteil{
+							width: 5ch;
+							margin-left: 1em;
+							text-align: right;
+						}
+					</style>
+					<input id="tage" placeholder="0"> Tage
+					<input id="anteil" placeholder="50" value="50"> % (Anteil im Team)
+				`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+					const anteil = parseNumber($("#anteil").value, { maxDecimalPlaces: 2, max: 100 }) / 100
+					return Math.round(tage * anteil * props.centsProTag)
+				}
+			}
+
+			class OrgaSatz extends CostKind {
+				template = `
+				<style>
+					#tage {
+						width: 10ch;
+						text-align: right;
+					}
+					#anteil{
+						width: 5ch;
+						margin-left: 1em;
+						text-align: right;
+					}
+				</style>
+				<input id="tage" placeholder="0"> Tage (Schulungsdauer)
+				<input id="anteil" placeholder="50" value="50"> % (Anteil im Team)
+			`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+
+					const anteil = parseNumber($("#anteil").value, { maxDecimalPlaces: 2, max: 100 }) / 100
+					return Math.round(Math.ceil(tage / 4) * anteil * props.centsProTag)
 				}
 			}
 		</script>
@@ -241,13 +288,13 @@
 		<cost-section heading="Honorar" id="honorar">
 			<script>
 				document.querySelector("#honorar").registerOptions([
-					new TagesSatz("Teamer*in LLT", { centsProTag: 20000 }),
-					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000 }),
-					new TagesSatz("Zusatz Orgaaufwand", { centsProTag: 10000, hint: "Pro angefangene 4 Schulungstage" }),
-					new TagesSatz("Küchenteamer*in", { centsProTag: 10000, hint: "Gemeinsames Honorar, nur bei Grundausbildungen und Aufbaumodulen" }),
+					new TagesSatz("Teamer*in LLT", { centsProTag: 20000, hint: "200 €/Tag, Anzahl wie vereinbart" }),
+					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000, hint: "100 €/Tag, Anzahl wie vereinbart" }),
+					new OrgaSatz("Zusatz Orgaaufwand", { centsProTag: 10000, hint: "100 € pro angefangene 4 Schulungstage, kann im Team aufgeteilt werden" }),
+					new TagesSatzAnteil("Küchenteamer*in", { centsProTag: 10000, hint: "100 €/Tag, gemeinsames Honorar, wird im Team aufgeteilt" }),
 				])
 
-				if (!urlParams.has("teamer")) {
+				if (!urlParams.has("team")) {
 					document.querySelector("#honorar").style.display = "none"
 				}
 			</script>
