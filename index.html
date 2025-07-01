@@ -10,6 +10,23 @@
 	<link rel="stylesheet" type="text/css" href="lib/style.css">
 	<script src="lib/cost.js"></script>
 	<style type="text/css">
+		#button-formular-version {
+			position: absolute;
+			top: -1.75em;
+			right: 3em;
+			font-size: 0.9em;
+			color: rgba(0 100 0 / 0.5);
+			cursor: pointer;
+		}
+
+		body:not([data-formular-version="standard"]) .formular-version-standard {
+			display: none;
+		}
+
+		body:not([data-formular-version="teamer"]) .formular-version-teamer {
+			display: none;
+		}
+
 		.absender {
 			display: grid;
 			grid-template-columns: max-content 1fr max-content 1fr;
@@ -40,8 +57,17 @@
 	</style>
 </head>
 
-<body>
+<body data-formular-version="standard">
 	<main>
+		<div id="button-formular-version" class="formular-version-standard" class="noprint">
+			Zur Teamer*innen-Version
+			<script>
+				document.querySelector("#button-formular-version").addEventListener("click", () => {
+					document.querySelector("body").setAttribute("data-formular-version", "teamer")
+				})
+			</script>
+		</div>
+
 		<cost-header heading="Abrechnung" img="logo.svg">
 			JDAV Nordrhein-Westfalen<br>
 			Elisabethstr. 14<br>
@@ -155,20 +181,22 @@
 					</style>
 					<input id="km" placeholder="0"> km
 					<select id="satz">
-					${urlParams.has("team")
-						? `<option value="20">LJL/LJS/Teamer*in (alleine)</option>
-					    <option value="30" data-mitfahrer>LJL/LJS/Teamer*in (1-3 Mitfahrer*innen)</option>`
-						: `<option value="7" selected>alleine</option>
-						<option value="14" data-mitfahrer>+1 Mitfahrer*in</option>
-						<option value="21" data-mitfahrer>+2 Mitfahrer*innen</option>
-						<option value="28" data-mitfahrer>+3 Mitfahrer*innen</option>`
-					}
-						<option value="35" data-mitfahrer>+4 Mitfahrer*innen</option>
-						<option value="42" data-mitfahrer>+5 Mitfahrer*innen</option>
-						<option value="49" data-mitfahrer>+6 Mitfahrer*innen</option>
-						<option value="56" data-mitfahrer>+7 Mitfahrer*innen</option>
-						<option value="63" data-mitfahrer>+8 Mitfahrer*innen</option>
-						<option value="30" data-relevanz>veranstaltungsrelevant</option>
+						<optgroup label="Anzahl Mitfahrer*innen:">
+							<option value="7" selected>alleine</option>
+							<option value="14" data-mitfahrer>+1 Mitfahrer*in</option>
+							<option value="21" data-mitfahrer>+2 Mitfahrer*innen</option>
+							<option value="28" data-mitfahrer>+3 Mitfahrer*innen</option>
+							<option value="35" data-mitfahrer>+4 Mitfahrer*innen</option>
+							<option value="42" data-mitfahrer>+5 Mitfahrer*innen</option>
+							<option value="49" data-mitfahrer>+6 Mitfahrer*innen</option>
+							<option value="56" data-mitfahrer>+7 Mitfahrer*innen</option>
+							<option value="63" data-mitfahrer>+8 Mitfahrer*innen</option>
+							<option value="30" data-relevanz>veranstaltungsrelevant</option>
+						</optgroup>
+						<optgroup label="Nur für LJL/LJS/LLT:">
+							<option value="20">LJL/LJS/LLT (alleine)</option>
+						  <option value="30" data-mitfahrer>LJL/LJS/LLT (1-3 Mitfahrer*innen)</option>
+						</optgroup>
 					</select>
 					<label id="label-satz" class="hint" for="satz"></label>
 					<textarea id="mitfahrer" placeholder="Name(n) Mitfahrer*innen"></textarea>
@@ -285,7 +313,7 @@
 			</script>
 		</cost-section>
 
-		<cost-section heading="Honorar" id="honorar">
+		<cost-section heading="Honorar" id="honorar" class="formular-version-teamer">
 			<script>
 				document.querySelector("#honorar").registerOptions([
 					new TagesSatz("Teamer*in LLT", { centsProTag: 20000, hint: "200 €/Tag, Anzahl wie vereinbart" }),
@@ -293,10 +321,6 @@
 					new OrgaSatz("Zusatz Orgaaufwand", { centsProTag: 10000, hint: "100 € pro angefangene 4 Schulungstage, kann im Team aufgeteilt werden" }),
 					new TagesSatzAnteil("Küchenteamer*in", { centsProTag: 10000, hint: "100 €/Tag, gemeinsames Honorar, wird im Team aufgeteilt" }),
 				])
-
-				if (!urlParams.has("team")) {
-					document.querySelector("#honorar").style.display = "none"
-				}
 			</script>
 		</cost-section>
 
@@ -323,9 +347,11 @@
 			</p>
 		</cost-footer>
 	</main>
+
 	<div id="toolbar" class="noprint">
 		<button class="button-primary" onclick="window.print();">Drucken / PDF erstellen</button>
 	</div>
+
 	<script>warnBeforeLeavingPage()</script>
 </body>
 

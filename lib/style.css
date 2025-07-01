@@ -20,6 +20,7 @@ body {
 }
 
 main {
+	position: relative;
 	box-sizing: border-box;
 	padding: 1em 2em;
 	margin: 1.5em auto;
