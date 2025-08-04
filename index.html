@@ -10,7 +10,8 @@
 	<link rel="stylesheet" type="text/css" href="lib/style.css">
 	<script src="lib/cost.js"></script>
 	<style type="text/css">
-		#button-formular-version {
+		#button-formular-standard,
+		#button-formular-teamer {
 			position: absolute;
 			top: -1.75em;
 			right: 3em;
@@ -59,11 +60,19 @@
 
 <body data-formular-version="standard">
 	<main>
-		<div id="button-formular-version" class="formular-version-standard" class="noprint">
-			Zur Teamer*innen-Version
+		<div id="button-formular-teamer" class="formular-version-standard noprint">
+			zur Teamer*innen-Version
 			<script>
-				document.querySelector("#button-formular-version").addEventListener("click", () => {
+				document.querySelector("#button-formular-teamer").addEventListener("click", () => {
 					document.querySelector("body").setAttribute("data-formular-version", "teamer")
+				})
+			</script>
+		</div>
+		<div id="button-formular-standard" class="formular-version-teamer noprint">
+			zur Standard-Version (Eingaben löschen)
+			<script>
+				document.querySelector("#button-formular-standard").addEventListener("click", () => {
+					window.location = window.location.pathname
 				})
 			</script>
 		</div>
@@ -98,6 +107,8 @@
 
 		<script>
 			const urlParams = new URLSearchParams(window.location.search)
+			if (urlParams.has("team"))
+				document.querySelector("body").setAttribute("data-formular-version", "teamer")
 
 			class Auslage extends CostKind {
 				template = `
