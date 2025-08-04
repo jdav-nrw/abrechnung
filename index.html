@@ -61,7 +61,7 @@
 <body data-formular-version="standard">
 	<main>
 		<div id="button-formular-teamer" class="formular-version-standard noprint">
-			zur Teamer*innen-Version
+			Zur Teamer*innen-Version
 			<script>
 				document.querySelector("#button-formular-teamer").addEventListener("click", () => {
 					document.querySelector("body").setAttribute("data-formular-version", "teamer")
@@ -69,7 +69,7 @@
 			</script>
 		</div>
 		<div id="button-formular-standard" class="formular-version-teamer noprint">
-			zur Standard-Version (Eingaben löschen)
+			Zur Standard-Version (Eingaben löschen)
 			<script>
 				document.querySelector("#button-formular-standard").addEventListener("click", () => {
 					window.location = window.location.pathname
@@ -79,16 +79,14 @@
 
 		<cost-header heading="Abrechnung" img="logo.svg">
 			JDAV Nordrhein-Westfalen<br>
-			Elisabethstr. 14<br>
-			40217 Düsseldorf
+			Elisabethstr. 14<br>			40217 Düsseldorf
 		</cost-header>
 
 		<div class="absender">
 			<span>Name:</span>
 			<input id="name">
 			<span>E-Mail:</span>
-			<input id="email" type="email">
-			<span>Straße:</span>
+			<input id="email" type="email">			<span>Straße:</span>
 			<input id="strasse">
 			<span>Telefon:</span>
 			<input id="telefon" type="tel">
