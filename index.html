@@ -64,7 +64,12 @@
 			Zur Teamer*innen-Version
 			<script>
 				document.querySelector("#button-formular-teamer").addEventListener("click", () => {
+					const url = new URL(window.location.href)
+					url.searchParams.set('team', '')
+					window.history.pushState(null, '', url.toString())
+
 					document.querySelector("body").setAttribute("data-formular-version", "teamer")
+					document.title = 'Team-' + document.title
 				})
 			</script>
 		</div>
@@ -73,7 +78,12 @@
 			<script>
 				document.querySelector("#button-formular-standard").addEventListener("click", () => {
 					// Der Einfachheit halber laden wir die Seite neu anstatt die betreffenden
-					// Elemente dynamisch zu entfernen.
+					// Elemente dynamisch zu entfernen. Der URL-Query-Parameter muss entfernt werden.
+					const url = new URL(window.location.href)
+					url.searchParams.delete('team')
+					window.history.pushState(null, '', url.toString())
+
+					window.onbeforeunload = null
 					window.location.reload()
 				})
 			</script>
@@ -109,8 +119,10 @@
 
 		<script>
 			const urlParams = new URLSearchParams(window.location.search)
-			if (urlParams.has("team"))
+			if (urlParams.has("team")) {
 				document.querySelector("body").setAttribute("data-formular-version", "teamer")
+				document.title = 'Team-' + document.title
+			}
 
 			class Auslage extends CostKind {
 				template = `
