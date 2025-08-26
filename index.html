@@ -74,11 +74,14 @@
 			</script>
 		</div>
 		<div id="button-formular-standard" class="formular-version-teamer noprint">
-			Zur Standard-Version (Eingaben löschen)
+			Zur Standard-Version
 			<script>
 				document.querySelector("#button-formular-standard").addEventListener("click", () => {
 					// Der Einfachheit halber laden wir die Seite neu anstatt die betreffenden
-					// Elemente dynamisch zu entfernen. Der URL-Query-Parameter muss entfernt werden.
+					// Elemente dynamisch zu entfernen. Der URL-Query-Parameter muss vorher entfernt werden.
+					if (!window.confirm("Alle Eingaben werden gelöscht! Fortfahren?")) {
+						return;
+					}
 					const url = new URL(window.location.href)
 					url.searchParams.delete('team')
 					window.history.pushState(null, '', url.toString())
