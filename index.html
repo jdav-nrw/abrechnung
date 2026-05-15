@@ -55,8 +55,29 @@
 		body:not([data-formular-version="teamer"])   .formular-version-teamer    { display: none; }
 
 		#formular-switch {
-			padding: 0.5em 0;
-			margin-bottom: 0.5em;
+			display: flex;
+			align-items: center;
+			gap: 0.5em;
+			padding: 0.6em 0;
+			margin: 0.5em 0;
+			border-bottom: 1px solid #ccc;
+		}
+		#formular-switch span {
+			font-weight: bold;
+			margin-right: 0.25em;
+		}
+		#formular-switch button {
+			padding: 0.3em 0.9em;
+			border: 1px solid #999;
+			background: #f0f0f0;
+			font-size: inherit;
+			cursor: pointer;
+		}
+		#formular-switch button.active {
+			background: #4ba61a;
+			color: #fff;
+			border-color: #3a8014;
+			font-weight: bold;
 		}
 	</style>
 </head>
@@ -64,19 +85,17 @@
 <body>
 	<main>
 		<cost-header heading="Reisekostenabrechnung" img="logo.svg">
-			<div slot="controls" id="formular-switch" class="noprint">
-				<label>Variante:
-					<select id="version-select">
-						<option value="standard">Standard (TN)</option>
-						<option value="personal">Personal</option>
-						<option value="teamer">Teamer*innen</option>
-					</select>
-				</label>
-			</div>
 			JDAV Nordrhein-Westfalen<br>
 			Elisabethstr. 14<br>
 			40217 Düsseldorf
 		</cost-header>
+
+		<div id="formular-switch" class="noprint">
+			<span>Formular-Variante:</span>
+			<button type="button" id="switch-standard">Standard (TN)</button>
+			<button type="button" id="switch-personal">Personal</button>
+			<button type="button" id="switch-teamer">Teamer*innen</button>
+		</div>
 
 		<form autocomplete="on">
 			<div class="absender">
@@ -587,7 +606,9 @@
 	<script>
 		function setFormVersion(version) {
 			document.body.dataset.formularVersion = version
-			document.getElementById("version-select").value = version
+			document.querySelectorAll("#formular-switch button").forEach(btn => {
+				btn.classList.toggle("active", btn.id === "switch-" + version)
+			})
 			const titleMap = {
 				standard: "Reisekostenabrechnung | JDAV NRW",
 				personal: "Reisekostenabrechnung Personal | JDAV NRW",
@@ -605,7 +626,9 @@
 
 		const urlVersion = new URL(window.location).searchParams.get("version")
 		setFormVersion(["standard", "personal", "teamer"].includes(urlVersion) ? urlVersion : "standard")
-		document.getElementById("version-select").addEventListener("change", (e) => setFormVersion(e.target.value))
+		document.getElementById("switch-standard").addEventListener("click", () => setFormVersion("standard"))
+		document.getElementById("switch-personal").addEventListener("click", () => setFormVersion("personal"))
+		document.getElementById("switch-teamer").addEventListener("click", () => setFormVersion("teamer"))
 	</script>
 </body>
 
