@@ -64,20 +64,19 @@
 <body>
 	<main>
 		<cost-header heading="Reisekostenabrechnung" img="logo.svg">
+			<div slot="controls" id="formular-switch" class="noprint">
+				<label>Variante:
+					<select id="version-select">
+						<option value="standard">Standard (TN)</option>
+						<option value="personal">Personal</option>
+						<option value="teamer">Teamer*innen</option>
+					</select>
+				</label>
+			</div>
 			JDAV Nordrhein-Westfalen<br>
 			Elisabethstr. 14<br>
 			40217 Düsseldorf
 		</cost-header>
-
-		<div id="formular-switch" class="noprint">
-			<label>Formular-Variante:
-				<select id="version-select">
-					<option value="standard">Standard (TN)</option>
-					<option value="personal">Personal</option>
-					<option value="teamer">Teamer*innen</option>
-				</select>
-			</label>
-		</div>
 
 		<form autocomplete="on">
 			<div class="absender">
