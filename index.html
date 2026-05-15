@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Reisekostenabrechnung Personal | JDAV NRW</title>
+	<title>Reisekostenabrechnung | JDAV NRW</title>
 	<link rel="icon" type="image/x-icon" href="favicon.png">
 	<link rel="stylesheet" type="text/css" href="lib/fonts.css">
 	<link rel="stylesheet" type="text/css" href="lib/style.css">
@@ -49,16 +49,35 @@
 			grid-row-gap: 0.5em;
 			margin-bottom: 0.5em;
 		}
+
+		body:not([data-formular-version="standard"]) .formular-version-standard { display: none; }
+		body:not([data-formular-version="personal"]) .formular-version-personal  { display: none; }
+		body:not([data-formular-version="teamer"])   .formular-version-teamer    { display: none; }
+
+		#formular-switch {
+			padding: 0.5em 0;
+			margin-bottom: 0.5em;
+		}
 	</style>
 </head>
 
 <body>
 	<main>
-		<cost-header heading="Reisekostenabrechnung Personal" img="logo.svg">
+		<cost-header heading="Reisekostenabrechnung" img="logo.svg">
 			JDAV Nordrhein-Westfalen<br>
 			Elisabethstr. 14<br>
 			40217 Düsseldorf
 		</cost-header>
+
+		<div id="formular-switch" class="noprint">
+			<label>Formular-Variante:
+				<select id="version-select">
+					<option value="standard">Standard (TN)</option>
+					<option value="personal">Personal</option>
+					<option value="teamer">Teamer*innen</option>
+				</select>
+			</label>
+		</div>
 
 		<form autocomplete="on">
 			<div class="absender">
@@ -413,6 +432,49 @@
 					return Math.round(proTag * anzahl)
 				}
 			}
+
+			class TagesSatz extends CostKind {
+				template = `
+					<style>#tage { width: 10ch; text-align: right; }</style>
+					<input id="tage" placeholder="0"> Tage
+				`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+					return Math.round(tage * props.centsProTag)
+				}
+			}
+
+			class TagesSatzAnteil extends CostKind {
+				template = `
+					<style>
+						#tage { width: 10ch; text-align: right; }
+						#anteil { width: 5ch; margin-left: 1em; text-align: right; }
+					</style>
+					<input id="tage" placeholder="0"> Tage
+					<input id="anteil" placeholder="50" value="50"> % (Anteil im Team)
+				`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+					const anteil = parseNumber($("#anteil").value, { maxDecimalPlaces: 2, max: 100 }) / 100
+					return Math.round(tage * anteil * props.centsProTag)
+				}
+			}
+
+			class OrgaSatz extends CostKind {
+				template = `
+					<style>
+						#tage { width: 10ch; text-align: right; }
+						#anteil { width: 5ch; margin-left: 1em; text-align: right; }
+					</style>
+					<input id="tage" placeholder="0"> Tage (Schulungsdauer)
+					<input id="anteil" placeholder="50" value="50"> % (Anteil im Team)
+				`
+				total({ props, $ }) {
+					const tage = parseNumber($("#tage").value, { maxDecimalPlaces: 2 })
+					const anteil = parseNumber($("#anteil").value, { maxDecimalPlaces: 2, max: 100 }) / 100
+					return Math.round(Math.ceil(tage / 4) * anteil * props.centsProTag)
+				}
+			}
 		</script>
 
 		<cost-section heading="Fahrtkosten" id="fahrtkosten">
@@ -450,7 +512,19 @@
 			</script>
 		</cost-section>
 
-		<cost-section heading="Verpflegungsmehraufwand" id="verpflegung">
+		<cost-section heading="Honorar" id="honorar" class="formular-version-teamer">
+			<script>
+				document.querySelector("#honorar").registerOptions([
+					new TagesSatz("Teamer*in LLT", { centsProTag: 20000, hint: "200 €/Tag, Anzahl wie vereinbart" }),
+					new TagesSatz("Hospitant*in LLT", { centsProTag: 10000, hint: "100 €/Tag, Anzahl wie vereinbart" }),
+					new TagesSatz("Teamer*in Jugendkurs", { centsProTag: 14000, hint: "140 €/Tag, Anzahl wie vereinbart" }),
+					new OrgaSatz("Zusatz Orgaaufwand", { centsProTag: 10000, hint: "100 € pro angefangene 4 Schulungstage, kann im Team aufgeteilt werden" }),
+					new TagesSatzAnteil("Küchenteamer*in", { centsProTag: 10000, hint: "100 €/Tag, gemeinsames Honorar, wird im Team aufgeteilt" }),
+				])
+			</script>
+		</cost-section>
+
+		<cost-section heading="Verpflegungsmehraufwand" id="verpflegung" class="formular-version-personal">
 			<div class="hint">
 				Deutschland: 14 € / 28 €. Für andere Länder können die Pauschalen frei eingetragen werden.
 			</div>
@@ -479,7 +553,22 @@
 			</script>
 		</cost-section>
 
-		<cost-footer connect-ids="fahrtkosten verpflegung auslagen">
+		<cost-footer connect-ids="fahrtkosten auslagen" class="formular-version-standard">
+			<p class="hint">
+				Bitte alle Belege einscannen/abfotografieren und <strong><u>digital</u></strong> dem PDF anhängen oder als Anhang mitschicken (an <a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).
+			</p>
+		</cost-footer>
+		<cost-footer connect-ids="fahrtkosten verpflegung auslagen" class="formular-version-personal">
+			<p class="hint">
+				Bitte alle Belege einscannen/abfotografieren und <strong><u>digital</u></strong> dem PDF anhängen oder als Anhang mitschicken (an <a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).
+			</p>
+			<p class="hint">
+				Es gilt eine <strong><u>Frist von 2 Wochen</u></strong> nach Veranstaltungsende für das Einreichen deiner Abrechnung.
+				Nach Überschreiten der Frist wird eine Gebühr von 50 € einbehalten (jedoch maximal der Gesamtbetrag).
+				Nach 8 Wochen wird nichts mehr erstattet. Wenn du absehbar mehr Zeit benötigst, melde dich rechtzeitig für eine Fristverlängerung bei uns.
+			</p>
+		</cost-footer>
+		<cost-footer connect-ids="honorar fahrtkosten auslagen" class="formular-version-teamer">
 			<p class="hint">
 				Bitte alle Belege einscannen/abfotografieren und <strong><u>digital</u></strong> dem PDF anhängen oder als Anhang mitschicken (an <a href="mailto:info@jdav-nrw.de">info@jdav-nrw.de</a>).
 			</p>
@@ -496,6 +585,29 @@
 	</div>
 
 	<script>warnBeforeLeavingPage()</script>
+	<script>
+		function setFormVersion(version) {
+			document.body.dataset.formularVersion = version
+			document.getElementById("version-select").value = version
+			const titleMap = {
+				standard: "Reisekostenabrechnung | JDAV NRW",
+				personal: "Reisekostenabrechnung Personal | JDAV NRW",
+				teamer:   "Reisekostenabrechnung Teamer*innen | JDAV NRW",
+			}
+			document.title = titleMap[version] ?? titleMap.standard
+			const url = new URL(window.location)
+			if (version === "standard") {
+				url.searchParams.delete("version")
+			} else {
+				url.searchParams.set("version", version)
+			}
+			history.replaceState(null, "", url)
+		}
+
+		const urlVersion = new URL(window.location).searchParams.get("version")
+		setFormVersion(["standard", "personal", "teamer"].includes(urlVersion) ? urlVersion : "standard")
+		document.getElementById("version-select").addEventListener("change", (e) => setFormVersion(e.target.value))
+	</script>
 </body>
 
 </html>
